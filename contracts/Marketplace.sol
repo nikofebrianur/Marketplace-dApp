@@ -23,6 +23,11 @@ contract Marketplace {
         uint256 quantity
     );
 
+    modifier onlyOwner() {
+        require(msg.sender == owner);
+        _;
+    }
+
     constructor() {
         owner = msg.sender;
     }
@@ -36,7 +41,7 @@ contract Marketplace {
         uint256 _cost,
         uint256 _rating,
         uint256 _stock
-    ) public {
+    ) public onlyOwner {
         // create item struct
         Item memory item = Item(
             _id,
