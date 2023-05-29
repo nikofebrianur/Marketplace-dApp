@@ -5,6 +5,16 @@ contract Marketplace {
     // define owner
     address public owner;
 
+    struct Item {
+        uint256 id;
+        string name;
+        string category;
+        string image;
+        uint256 cost;
+        uint256 rating;
+        uint256 stock;
+    }
+
     constructor() {
         owner = msg.sender;
     }
@@ -19,7 +29,10 @@ contract Marketplace {
         uint256 _rating,
         uint256 _stock
     ) public {
+        // create item struct
+        Item memory item = Item(_id, _name, _category, _image, _cost, _rating, _stock);
 
+        // save item struct to blockchain
     }
     // buy products
 
