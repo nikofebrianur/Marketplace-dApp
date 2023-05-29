@@ -15,6 +15,8 @@ contract Marketplace {
         uint256 stock;
     }
 
+    mapping(uint256 => Item) public items;
+
     constructor() {
         owner = msg.sender;
     }
@@ -30,9 +32,17 @@ contract Marketplace {
         uint256 _stock
     ) public {
         // create item struct
-        Item memory item = Item(_id, _name, _category, _image, _cost, _rating, _stock);
-
+        Item memory item = Item(
+            _id,
+            _name,
+            _category,
+            _image,
+            _cost,
+            _rating,
+            _stock
+        );
         // save item struct to blockchain
+        items[_id] = item;
     }
     // buy products
 
