@@ -17,6 +17,12 @@ contract Marketplace {
 
     mapping(uint256 => Item) public items;
 
+    event ListProducts(
+        string name,
+        uint256 cost,
+        uint256 quantity
+    );
+
     constructor() {
         owner = msg.sender;
     }
@@ -43,6 +49,8 @@ contract Marketplace {
         );
         // save item struct to blockchain
         items[_id] = item;
+        // emit event
+        emit ListProducts(_name, _cost, _stock);
     }
     // buy products
 
