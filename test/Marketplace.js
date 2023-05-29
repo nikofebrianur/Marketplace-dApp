@@ -25,22 +25,35 @@ describe("Marketplace", () => {
   describe("Listing", () => {
     let transaction;
 
+    const ID = 1;
+    const NAME = "Book";
+    const CATEGORY = "Crime";
+    const IMAGE = "https://ipfs.io";
+    const COST = tokens(1);
+    const RATING = 5;
+    const STOCK = 10;
+
     beforeEach(async () => {
       transaction = await marketplace.connect(deployer).listProducts(
-        1,
-        "Book",
-        "Crime",
-        "IMAGE",
-        100,
-        5,
-        10
+        ID,
+        NAME,
+        CATEGORY,
+        IMAGE,
+        COST,
+        RATING,
+        STOCK
       );
       await transaction.wait();
     })
 
     it("Returns item attributes", async () => {
-      const item = await marketplace.items(1);
-      expect(item.id).to.equal(1);
+      const item = await marketplace.items(ID);
+      expect(item.id).to.equal(ID);
+      expect(item.name).to.equal(NAME);
+      expect(item.category).to.equal(CATEGORY);
+      expect(item.image).to.equal(IMAGE);
+      expect(item.cost).to.equal(COST);
+      expect(item.stock).to.equal(STOCK);
     });
   });
 
