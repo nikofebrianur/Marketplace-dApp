@@ -55,6 +55,9 @@ describe("Marketplace", () => {
       expect(item.cost).to.equal(COST);
       expect(item.stock).to.equal(STOCK);
     });
-  });
 
+    it("Emit ListProducts event", async () => {
+      expect(transaction).to.emit(marketplace, "ListProducts");
+    });
+  });
 })
