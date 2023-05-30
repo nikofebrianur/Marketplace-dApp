@@ -108,4 +108,50 @@ describe("Marketplace", () => {
       expect(transaction).to.emit(marketplace, "BuyProducts");
     });
   });
-});
+
+  describe("Withdrawing", () => {
+    let balanceBefore;
+
+    const ID = 1;
+    const NAME = "Book";
+    const CATEGORY = "Crime";
+    const IMAGE = "https://ipfs.io";
+    const COST = tokens(1);
+    const RATING = 5;
+    const STOCK = 10;
+
+    beforeEach(async () => {
+      // list an item
+      transaction = await marketplace.connect(deployer).listProducts(
+        ID,
+        NAME,
+        CATEGORY,
+        IMAGE,
+        COST,
+        RATING,
+        STOCK
+      );
+      await transaction.wait();
+
+      // buy an item
+      transaction = await marketplace.connect(buyer).buyProducts(ID, { value: COST });
+
+      // get deployer balance before
+      balanceBefore = await ethers.provider.getBalance(deployer.address);
+
+      // withdraw 
+      transaction = await marketplace.connect(deployer).withdraw()
+      await transaction.wait();
+    })
+
+    it("Update the owner balance", async () => {
+      const balanceAfter = await ethers.provider.getBalance(deployer.address);
+      expect(balanceAfter).to.be.greaterThan(balanceBefore);
+    });
+
+    it("Update the contract balance", async () => {
+      const result = await ethers.provider.getBalance(marketplace.address);
+      expect(result).to.equal(0);
+    });
+  });
+})
