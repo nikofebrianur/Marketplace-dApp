@@ -60,8 +60,16 @@ describe("Marketplace", () => {
     });
   });
 
-  describe("Listing", () => {
+  describe("Buying", () => {
     let transaction;
+
+    const ID = 1;
+    const NAME = "Book";
+    const CATEGORY = "Crime";
+    const IMAGE = "https://ipfs.io";
+    const COST = tokens(1);
+    const RATING = 5;
+    const STOCK = 10;
 
     beforeEach(async () => {
       // list an item
@@ -83,6 +91,21 @@ describe("Marketplace", () => {
     it("Update the contract balance", async () => {
       const result = await ethers.provider.getBalance(marketplace.address);
       expect(result).to.equal(COST);
+    });
+
+    it("Update the buyer's order count", async () => {
+      const result = await marketplace.orderCounts(buyer.address);
+      expect(result).to.equal(1);
+    });
+
+    it("Adds the order", async () => {
+      const order = await marketplace.orders(buyer.address, 1);
+      expect(order.time).to.be.greaterThan(0);
+      expect(order.item.name).to.equal(NAME);
+    });
+
+    it("Emit BuyProducts event", async () => {
+      expect(transaction).to.emit(marketplace, "BuyProducts");
     });
   });
 });
