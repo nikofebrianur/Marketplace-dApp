@@ -10,7 +10,6 @@ describe("Marketplace", () => {
 
   beforeEach(async () => {
     [deployer, buyer] = await ethers.getSigners();
-    console.log(deployer, buyer);
 
     const Marketplace = await ethers.getContractFactory("Marketplace");
     marketplace = await Marketplace.deploy();
@@ -60,4 +59,30 @@ describe("Marketplace", () => {
       expect(transaction).to.emit(marketplace, "ListProducts");
     });
   });
-})
+
+  describe("Listing", () => {
+    let transaction;
+
+    beforeEach(async () => {
+      // list an item
+      transaction = await marketplace.connect(deployer).listProducts(
+        ID,
+        NAME,
+        CATEGORY,
+        IMAGE,
+        COST,
+        RATING,
+        STOCK
+      );
+      await transaction.wait();
+
+      // buy an item
+      transaction = await marketplace.connect(buyer).buyProducts(ID, { value: COST });
+    })
+
+    it("Update the contract balance", async () => {
+      const result = await ethers.provider.getBalance(marketplace.address);
+      expect(result).to.equal(COST);
+    });
+  });
+});
