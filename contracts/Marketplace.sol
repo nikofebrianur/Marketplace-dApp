@@ -15,12 +15,25 @@ contract Marketplace {
         uint256 stock;
     }
 
+    struct Order {
+        uint256 time;
+        Item item;
+    }
+
     mapping(uint256 => Item) public items;
+    mapping(address => uint256) public orderCounts;
+    mapping(address => mapping(uint256 => Order)) public orders;
 
     event ListProducts(
         string name,
         uint256 cost,
         uint256 quantity
+    );
+
+    event BuyProducts(
+        address buyer,
+        uint256 orderId,
+        uint256 itemId
     );
 
     modifier onlyOwner() {
@@ -58,6 +71,17 @@ contract Marketplace {
         emit ListProducts(_name, _cost, _stock);
     }
     // buy products
+    function buyProducts(uint256 _id) public payable {
+        Item memory item = items[_id];
+        require(msg.value >= item.cost);
+        require(item.stock > 0);
+        
+        Order memory order = Order(block.timestamp, item);
+        orderCounts[msg.sender]++;
+        orders[msg.sender][orderCounts[msg.sender]] = order;
+        items[_id].stock = item.stock - 1;
+        emit BuyProducts(msg.sender, orderCounts[msg.sender], item.id);
+    }
 
     // withdraw funds
 }
